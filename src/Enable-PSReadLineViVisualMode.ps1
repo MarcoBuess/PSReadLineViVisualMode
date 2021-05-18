@@ -16,3 +16,13 @@ Set-PSReadLineKeyHandler -ViMode Command -Key V -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::BeginningOfLine()
     [Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()
 }
+
+# Copy selection to system clipboard
+Set-PSReadLineKeyHandler -ViMode Command -Key '*,y' -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::Copy()
+}
+
+# Paste selection from system clipboard
+Set-PSReadLineKeyHandler -ViMode Command -Key '*,p' -ScriptBlock {
+    [Microsoft.PowerShell.PSConsoleReadLine]::Paste()
+}
