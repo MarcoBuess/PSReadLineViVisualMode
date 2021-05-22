@@ -3,6 +3,13 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
     :loop while ($true) {
         switch ([Console]::ReadKey($true).Key) {
             W {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
+            E {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()
+               [Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()
+
+               $selectionStart = $null
+               $selectionLength = $null
+               [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
+               [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength - 1)}
             B {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
             L {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()}
             H {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
