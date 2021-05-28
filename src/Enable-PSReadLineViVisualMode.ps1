@@ -16,6 +16,8 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
             H {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
             Y {[Microsoft.PowerShell.PSConsoleReadLine]::Copy()
                break loop}
+            P {[Microsoft.PowerShell.PSConsoleReadLine]::Paste()
+               break loop}
             Escape { break loop }
         }
     }
