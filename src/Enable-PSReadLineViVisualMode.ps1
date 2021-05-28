@@ -1,12 +1,16 @@
 # Movements for w, b, l, h
 Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
-
     [Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()
 
     :loop while ($true) {
-        switch ([Console]::ReadKey($true).Key) {
+        $input = [Console]::ReadKey($true)
+
+        switch ($input.Key) {
             W {[Microsoft.PowerShell.PSConsoleReadLine]::SelectNextWord()}
             E {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
+            {($_ -eq [ConsoleKey]::D4) -and ($input.Modifiers -eq [ConsoleModifiers]::Shift)} {
+               [Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()
+            }
             B {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
             L {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()}
             H {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
