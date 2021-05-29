@@ -12,6 +12,11 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
                [Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()
             }
             B {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
+            {($_ -eq [ConsoleKey]::X) -or ($_ -eq [ConsoleKey]::D)} {
+               [Microsoft.PowerShell.PSConsoleReadLine]::Copy()
+               [Microsoft.PowerShell.PSConsoleReadLine]::DeleteChar()
+               break loop
+            }
             L {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()}
             H {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
             Y {[Microsoft.PowerShell.PSConsoleReadLine]::Copy()
