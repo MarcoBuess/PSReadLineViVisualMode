@@ -3,12 +3,30 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()
 
     :loop while ($true) {
-        $input = [Console]::ReadKey($true)
+        #TODO: Loop until movement command is hit
+        $userInput = [Console]::ReadKey($true)
 
-        switch ($input.Key) {
+        $parsedInput =
+            $userInput |
+            sls "^(\D)|(\d+)(\D)$" | % {
+                #TODO: Parse movement to [Console.Key]
+                if ($_.Matches.Groups[1].Success -eq $true) {
+                    [PSCustomObject]@{
+                        count    = 0
+                        movement = $_.Matches.Groups[1].Value
+                    }
+                } else {
+                    [PSCustomObject]@{
+                        count    = $_.Matches.Groups[2].Value
+                        movement = $_.Matches.Groups[3].Value
+                    }
+                }
+            }
+
+        switch ($userInput.Key) {
             W {[Microsoft.PowerShell.PSConsoleReadLine]::SelectNextWord()}
             E {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
-            {($_ -eq [ConsoleKey]::D4) -and ($input.Modifiers -eq [ConsoleModifiers]::Shift)} {
+            {($_ -eq [ConsoleKey]::D4) -and ($userInput.Modifiers -eq [ConsoleModifiers]::Shift)} {
                [Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()
             }
             B {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
