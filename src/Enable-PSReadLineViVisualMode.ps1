@@ -4,7 +4,18 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
 
     :loop while ($true) {
         #TODO: Loop until movement command is hit
-        $userInput = [Console]::ReadKey($true)
+        $userInput = New-Object -TypeName System.Text.StringBuilder
+
+        while ($true) {
+            $currentInput = [Console]::ReadKey($true)
+
+            if (-not [char]::IsDigit($currentInput.KeyChar)) {
+                $userInput.Append($currentInput.KeyChar)
+                break;
+            }
+
+            $userInput.Append($currentInput.KeyChar)
+        }
 
         $parsedInput =
             $userInput |
