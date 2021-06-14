@@ -3,10 +3,14 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()
 
     :loop while ($true) {
-        # Loop input until char aka. command is hit
+        # Loop input until char aka. command or escape is hit
         $userInput = New-Object -TypeName System.Text.StringBuilder
         while ($true) {
             $currentInput = [Console]::ReadKey($true)
+
+            if ($currentInput.Key -eq [ConsoleKey]::Escape) {
+                break loop
+            }
 
             if (-not [char]::IsDigit($currentInput.KeyChar)) {
                 $userInput.Append($currentInput.KeyChar)
@@ -34,27 +38,27 @@ Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
             }
 
         for ($i = 0; $i -lt $parsedInput.motionCount; $i++) {
-            # TODO: Casting '$' and other specials not working. Consider switching to just char's instead of [ConsoleKey]
-            switch ([ConsoleKey]$parsedInput.motion) {
-                W {[Microsoft.PowerShell.PSConsoleReadLine]::SelectNextWord()}
-                E {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
-                {($_ -eq [ConsoleKey]::D4) -and ($userInput.Modifiers -eq [ConsoleModifiers]::Shift)} {
-                [Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()
+            switch -CaseSensitive ($parsedInput.motion) {
+                'w' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectNextWord()}
+                'e' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
+                '$' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()}
+                'b' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
+                {($_ -eq 'x') -or ($_ -eq 'd')} {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Copy()
+                    [Microsoft.PowerShell.PSConsoleReadLine]::DeleteChar()
+                    break loop
                 }
-                B {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardWord()}
-                {($_ -eq [ConsoleKey]::X) -or ($_ -eq [ConsoleKey]::D)} {
-                [Microsoft.PowerShell.PSConsoleReadLine]::Copy()
-                [Microsoft.PowerShell.PSConsoleReadLine]::DeleteChar()
-                break loop
+                'l' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()}
+                'h' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
+                'y' {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Copy()
+                    break loop
                 }
-                L {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()}
-                H {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardChar()}
-                Y {[Microsoft.PowerShell.PSConsoleReadLine]::Copy()
-                break loop}
-                P {[Microsoft.PowerShell.PSConsoleReadLine]::Paste()
-                break loop}
-                Oem5 {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardsLine()}
-                Escape { break loop }
+                'p' {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Paste()
+                    break loop
+                }
+                '^' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectBackwardsLine()}
             }
         }
     }
