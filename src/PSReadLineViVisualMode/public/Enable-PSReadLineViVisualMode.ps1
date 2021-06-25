@@ -1,41 +1,17 @@
+# Enable Vi edit mode
+Set-PSReadLineOption -EditMode Vi
+
 # Movements for w, b, l, h
 Set-PSReadLineKeyHandler -ViMode Command -Key v -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardChar()
 
     :loop while ($true) {
         # Loop input until char aka. command or escape is hit
-        $userInput = New-Object -TypeName System.Text.StringBuilder
-        while ($true) {
-            $currentInput = [Console]::ReadKey($true)
-
-            if ($currentInput.Key -eq [ConsoleKey]::Escape) {
-                break loop
-            }
-
-            if (-not [char]::IsDigit($currentInput.KeyChar)) {
-                $userInput.Append($currentInput.KeyChar)
-                break;
-            }
-
-            $userInput.Append($currentInput.KeyChar)
-        }
+        $userInput = Read-Input -UserInput $([Console]::ReadKey($true))
+        if (-not $userInput) { break loop }
 
         # Parse input into motionCount and motion
-        $parsedInput =
-            $userInput |
-            sls "^(\D)|(\d+)(\D)$" | % {
-                if ($_.Matches.Groups[1].Success -eq $true) {
-                    [PSCustomObject]@{
-                        motionCount = 1
-                        motion      = $_.Matches.Groups[1].Value
-                    }
-                } else {
-                    [PSCustomObject]@{
-                        motionCount = $_.Matches.Groups[2].Value
-                        motion      = $_.Matches.Groups[3].Value
-                    }
-                }
-            }
+        $parsedInput = Test-Input -UserInput $userInput
 
         for ($i = 0; $i -lt $parsedInput.motionCount; $i++) {
             switch -CaseSensitive ($parsedInput.motion) {
