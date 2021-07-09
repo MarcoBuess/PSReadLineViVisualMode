@@ -4,7 +4,7 @@ Tries to mimic VIM's visual mode.
 
 ## Quick Start
 
-Close the module to a local folder.
+Clone the module to a local folder.
 
 ```powershell
 git clone https://github.com/MarcoBuess/PSReadLineViVisualMode.git .
