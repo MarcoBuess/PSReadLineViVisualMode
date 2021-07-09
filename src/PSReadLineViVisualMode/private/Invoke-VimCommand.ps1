@@ -5,8 +5,8 @@ function Invoke-VimCommand {
         [PSCustomObject]$Command
     )
 
-    for ($i = 0; $i -lt $parsedInput.motionCount; $i++) {
-        switch -CaseSensitive ($parsedInput.motion) {
+    for ($i = 0; $i -lt $Command.motionCount; $i++) {
+        switch -CaseSensitive ($Command.motion) {
             'w' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectNextWord()}
             'e' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectForwardWord()}
             '$' {[Microsoft.PowerShell.PSConsoleReadLine]::SelectLine()}
