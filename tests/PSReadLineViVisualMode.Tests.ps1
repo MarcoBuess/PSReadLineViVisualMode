@@ -6,6 +6,8 @@ Get-Module -Name $Module -ListAvailable -All | Remove-Module -Force -ErrorAction
 
 Import-Module -Name $Module -Force -ErrorAction Stop
 
+ls $PSScriptRoot\generators | select -exp FullName | % { . $_ }
+
 InModuleScope $ModuleName {
     Describe "Test-Input" {
         It "When a single motion <UserInput> is entered <Expected> is returned." -TestCases @(
@@ -21,12 +23,8 @@ InModuleScope $ModuleName {
                            -IncludeEqual).SideIndicator
             | Should -Be "=="
         }
-        It "When a multi motion <UserInput> is entered <Expected> is returned." -TestCases @(
-            @{ UserInput = '2w'; Expected = [PSCustomObject]@{motionCount = 2; motion = 'w'} }
-            @{ UserInput = '201v'; Expected = [PSCustomObject]@{motionCount = 201; motion = 'v'} }
-            @{ UserInput = '17e'; Expected = [PSCustomObject]@{motionCount = 17; motion = 'e'} }
-            @{ UserInput = '99999l'; Expected = [PSCustomObject]@{motionCount = 99999; motion = 'l'} }
-        ) {
+
+        It "When a multi motion <UserInput> is entered <Expected> is returned." -TestCases $(Invoke-UserInputGenerator -Samples 100) {
             param ($UserInput, $Expected)
 
             (Compare-Object -ReferenceObject $Expected `
