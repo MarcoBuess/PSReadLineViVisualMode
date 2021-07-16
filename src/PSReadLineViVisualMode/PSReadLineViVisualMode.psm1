@@ -12,4 +12,7 @@ foreach($import in @($public + $private)) {
     }
 }
 
+$MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
+    Set-PSReadLineOption -EditMode Windows
+}
 #Export-ModuleMember -Function $public.Basename
