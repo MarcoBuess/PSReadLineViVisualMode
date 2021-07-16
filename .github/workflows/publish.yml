@@ -1,14 +1,14 @@
-name: publish
+name: Publish
 on: push
 
 jobs:
   pester-test:
-    name: Pester test
+    name: Run Pester Tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Perform a Pester test from the Tests.ps1 file
+      - name: Run tests from provided test file
         shell: pwsh
         run: |
           Invoke-Pester .\tests\PSReadLineViVisualMode.Tests.ps1 -Passthru
