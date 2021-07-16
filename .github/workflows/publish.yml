@@ -1,0 +1,20 @@
+name: Publish
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  pester-test:
+    name: Run Pester Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Run tests from provided test file
+        shell: pwsh
+        run: |
+          Invoke-Pester .\tests\PSReadLineViVisualMode.Tests.ps1 -Output Detailed
