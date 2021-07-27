@@ -15,11 +15,11 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Setup PowerShell module cache
-          id: cacher
-          uses: actions/cache@v2
-          with:
-            path: "~/.local/share/powershell/Modules"
-            key: ${{ runner.os }}-PSScriptAnalyzer
+        id: cacher
+        uses: actions/cache@v2
+        with:
+          path: "~/.local/share/powershell/Modules"
+          key: ${{ runner.os }}-PSScriptAnalyzer
       - name: Install required PowerShell modules
         if: steps.cacher.outputs.cache-hit != 'true'
         shell: pwsh
@@ -27,16 +27,16 @@ jobs:
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module PSScriptAnalyzer -ErrorAction Stop
       - name: Lint with PSScriptAnalyzer
-              shell: pwsh
-              run: |
-                Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
-                $errors   = $issues.Where({$_.Severity -eq 'Error'})
-                $warnings = $issues.Where({$_.Severity -eq 'Warning'})
-                if ($errors) {
-                    Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
-                } else {
-                    Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
-                }
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -Outvariable issues
+          $errors   = $issues.Where({$_.Severity -eq 'Error'})
+          $warnings = $issues.Where({$_.Severity -eq 'Warning'})
+          if ($errors) {
+              Write-Error "There were $($errors.Count) errors and $($warnings.Count) warnings total." -ErrorAction Stop
+          } else {
+              Write-Output "There were $($errors.Count) errors and $($warnings.Count) warnings total."
+          }
       - name: Run Pester tests from provided test file
         shell: pwsh
         run: |
